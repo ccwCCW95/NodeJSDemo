@@ -2,7 +2,7 @@
  * @Author: Changwei Cao
  * @Date: 2022-11-11 15:18:07
  * @LastEditors: Changwei Cao
- * @LastEditTime: 2022-11-12 14:32:56
+ * @LastEditTime: 2022-11-12 15:08:56
  * @Description: 
  */
 // 导入数据库操作模块
@@ -10,6 +10,7 @@ const db = require('../db/index')
 
 // 导入 bcryptjs 这个包
 const bcrypt = require('bcryptjs')
+
 
 // 注册新用户的处理函数
 exports.regUser = (req, res) => {
