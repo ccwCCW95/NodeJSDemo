@@ -2,7 +2,7 @@
  * @Author: Changwei Cao
  * @Date: 2022-11-11 15:18:07
  * @LastEditors: Changwei Cao
- * @LastEditTime: 2022-11-12 15:08:56
+ * @LastEditTime: 2022-11-18 14:39:40
  * @Description: 
  */
 // 导入数据库操作模块
@@ -17,9 +17,9 @@ exports.regUser = (req, res) => {
     // 获取客户端提交到服务器的用户信息
     const userinfo = req.body
     // 对表单数据进行合法性校验
-    if (!userinfo.username || !userinfo.password){
-        return res.send({status: 1, message: '用户名或密码不合法！'})
-    }
+    // if (!userinfo.username || !userinfo.password){
+    //     return res.send({status: 1, message: '用户名或密码不合法！'})
+    // }
 
     // 定义sql, 查询用户名是否被占用
     const sqlStr = 'select * from ev_users where username=?'
@@ -27,12 +27,14 @@ exports.regUser = (req, res) => {
     db.query(sqlStr, userinfo.username, (err, results) => {
         // 执行sql失败
         if(err){
-            return res.send({status: 1, message: err.message})
+            // return res.send({status: 1, message: err.message})
+            return res.cc(err)
         }
 
         // 判断用户名是否被占用
         if(results.length > 0){
-            return res.send({status: 1, message: '用户名已被占用！'})
+            // return res.send({status: 1, message: '用户名已被占用！'})
+            return res.cc('用户名已被占用！')
         }
 
         // 调用 bcrypt.hashSync() 对密码进行加密
@@ -44,16 +46,19 @@ exports.regUser = (req, res) => {
         db.query(sqlInsert, {username: userinfo.username, password: userinfo.password}, (err, results) => {
             // 判断sql语句是否执行成功
             if(err){
-                return res.send({status: 1, message: err.message})
+                // return res.send({status: 1, message: err.message})
+                return res.cc(err)
             }
 
             // 判断影响行数是否为1
             if(results.affectedRows != 1){
-                return res.send({status: 1, message: '注册用户失败，请稍候再试！'})
+                // return res.send({status: 1, message: '注册用户失败，请稍候再试！'})
+                return res.cc('注册用户失败，请稍候再试！')
             }
 
             // 注册用户成功
-            res.send({status: 0, message: '注册用户成功！'})
+            // res.send({status: 0, message: '注册用户成功！'})
+            return res.cc('注册用户成功！', 0)
         })
     })
 
