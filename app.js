@@ -2,7 +2,7 @@
  * @Author: Changwei Cao
  * @Date: 2022-11-11 14:10:50
  * @LastEditors: Changwei Cao
- * @LastEditTime: 2022-11-18 14:55:05
+ * @LastEditTime: 2022-12-07 13:48:41
  * @Description: 
  */
 
@@ -34,14 +34,23 @@ app.use((req, res, next) => {
     next()
 })
 
+// 配置解析token的中间件
+const expressJWT = require('express-jwt')
+const config = require('./config')
+
+app.use(expressJWT({secret: config.jwtSecretKeyv}).unless({path: [/^\/api/]}))
+
 // 导入并使用用户路由模块
 const userRouter = require('./router/user')
+const { path } = require('@hapi/joi/lib/errors')
 app.use('/api', userRouter)
 
 // 定义错误级别的中间件
 app.use((err, req, res, next) => {
     // 验证失败导致的错误
     if(err instanceof joi.ValidationError) return res.cc(err)
+    // 身份验证失败后的错误
+    if(err.name == 'UnauthorizedError') return res.cc('身份验证失败！')
     // 未知的错误
     res.cc(err)
 })

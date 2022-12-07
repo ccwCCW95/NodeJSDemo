@@ -2,7 +2,7 @@
  * @Author: Changwei Cao
  * @Date: 2022-11-11 15:06:14
  * @LastEditors: Changwei Cao
- * @LastEditTime: 2022-11-18 14:41:35
+ * @LastEditTime: 2022-12-07 12:51:28
  * @Description: 
  */
 const express = require('express')
@@ -22,6 +22,6 @@ const {reg_login_schema} = require('../schema/user')
 router.post('/reguser', expressJoi(reg_login_schema), user_handler.regUser)
 
 // 登录
-router.post('/login', user_handler.login)
+router.post('/login', expressJoi(reg_login_schema), user_handler.login)
 
 module.exports = router
