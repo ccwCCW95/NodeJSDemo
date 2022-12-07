@@ -2,13 +2,14 @@
  * @Author: Changwei Cao
  * @Date: 2022-12-07 14:44:16
  * @LastEditors: Changwei Cao
- * @LastEditTime: 2022-12-07 14:55:16
+ * @LastEditTime: 2022-12-07 22:43:10
  * @Description: 用户信息处理逻辑路由
  */
 
 // 导入数据库模块
 const db = require('../db/index')
 
+// 获取用户基本信息的函数
 exports.getUserInfo = (req,res) => {
     // 定义sql语句
     const sql = 'select id, username, nickname, email, user_pic from ev_users where id = ?'
@@ -27,6 +28,19 @@ exports.getUserInfo = (req,res) => {
             data: results[0],
         })
     })
+}
 
-    // res.send('ok')
+// 更新用户基本信息的路由
+exports.updateUserInfo = (req, res) => {
+    // 定义sql
+    const sql = 'update ev_users set ? where id = ?'
+    // 调用执行
+    db.query(sql, [req.body, req.body.id], (err, results) => {
+        // 执行失败
+        if(err) return res.cc(err)
+        // 更新失败
+        if(results.affectedRows != 1) return res.cc('更新用户信息失败！')
+        // 成功
+        res.cc('更新成功！', 0)
+    })
 }
