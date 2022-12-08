@@ -2,7 +2,7 @@
  * @Author: Changwei Cao
  * @Date: 2022-11-18 14:31:06
  * @LastEditors: Changwei Cao
- * @LastEditTime: 2022-12-07 22:27:17
+ * @LastEditTime: 2022-12-08 15:43:18
  * @Description: 
  */
 // 导入定义验证规则的包
@@ -33,5 +33,13 @@ exports.update_userinfo_schema = {
         id,
         nickname,
         email,
+    }
+}
+
+// 验证规则对象 --- 更新用户密码
+exports.update_password_schema = {
+    body: {
+        oldPwd: password,
+        newPwd: joi.not(joi.ref('oldPwd')).concat(password)
     }
 }

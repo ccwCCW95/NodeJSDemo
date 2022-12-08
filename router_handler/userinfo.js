@@ -2,12 +2,15 @@
  * @Author: Changwei Cao
  * @Date: 2022-12-07 14:44:16
  * @LastEditors: Changwei Cao
- * @LastEditTime: 2022-12-07 22:43:10
+ * @LastEditTime: 2022-12-08 15:59:01
  * @Description: 用户信息处理逻辑路由
  */
 
 // 导入数据库模块
 const db = require('../db/index')
+
+// 导入处理密码的模块
+const bcrypt = require('bcryptjs')
 
 // 获取用户基本信息的函数
 exports.getUserInfo = (req,res) => {
@@ -42,5 +45,31 @@ exports.updateUserInfo = (req, res) => {
         if(results.affectedRows != 1) return res.cc('更新用户信息失败！')
         // 成功
         res.cc('更新成功！', 0)
+    })
+}
+
+// 更新用户密码的路由
+exports.updatePassword = (req, res) => {
+    // 根据id查询用户的信息
+    const sql = 'select * from ev_users where id = ?'
+
+    // 执行查询操作
+    db.query(sql, req.user.id, (err, results) => {
+        if(err) return res.cc(err)
+        if(results.length != 1) return res.cc('未查询到该用户')
+        
+        // 判断原密码是否正确
+        const comparePwd = bcrypt.compareSync(req.body.oldPwd, results[0].password)
+        if(!comparePwd) return res.cc('原密码输入错误')
+
+        // 更新数据库中的密码
+        const updateSql = 'update ev_users set password = ? where id = ?'
+        // 对新密码进行加密
+        const newPwd = bcrypt.hashSync(req.body.newPwd, 10)
+        db.query(updateSql, [newPwd, req.user.id], (err, results) => {
+            if(err) return res.cc(err)
+            if(results.affectedRows != 1) return res.cc('密码修改错误！')
+            res.cc('密码修改成功！', 0)
+        })
     })
 }
