@@ -2,7 +2,7 @@
  * @Author: Changwei Cao
  * @Date: 2022-12-07 14:44:16
  * @LastEditors: Changwei Cao
- * @LastEditTime: 2022-12-08 15:59:01
+ * @LastEditTime: 2022-12-09 00:18:11
  * @Description: 用户信息处理逻辑路由
  */
 
@@ -71,5 +71,19 @@ exports.updatePassword = (req, res) => {
             if(results.affectedRows != 1) return res.cc('密码修改错误！')
             res.cc('密码修改成功！', 0)
         })
+    })
+}
+
+// 更新用户头像的处理函数
+exports.updateAvatar = (req, res) => {
+    // 定义更新头像的sql
+    const sql = 'update ev_users set user_pic = ? where id = ?'
+
+    // 执行sql
+    db.query(sql, [req.body.avatar, req.user.id], (err, results) => {
+        if(err) return res.cc(err)
+        if(results.affectedRows != 1) return res.cc('更新用户头像出错！')
+
+        res.cc('成功更新头像', 0)
     })
 }
